@@ -3,40 +3,30 @@ import { View, Button } from "react-native";
 import { Text, Box, Center, Heading } from "@gluestack-ui/themed";
 import { useDispatch, useSelector } from "react-redux";
 import { actualizar } from "../redux/dateSlice";
+import { numberToMonth } from "../utils/numberToMonth";
 
 const HomeScreen = ({ navigation }) => {
-  const obtenerNombreMes = (numeroMes) => {
-    const nombresMeses = [
-      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-    ];
   
-    // Restar 1 porque los meses en JavaScript comienzan desde 0
-    const indiceMes = numeroMes;
-  
-    if (indiceMes >= 0 && indiceMes < nombresMeses.length) {
-      return nombresMeses[indiceMes];
-    } else {
-      return "Mes no válido";
-    }
-  };
-  let dia;
-  let mes;
-  let año;
+   
+  let dia, mes, anio, horas, minutos, segundos, nombreMes;
   const dispatch = useDispatch();
-  const { ultimoConsumo } = useSelector((state) => state.date);
+  const estado = useSelector((state) => state.date);
+  const { ultimoConsumo } = estado;
+console.log(estado.consumoHistorico)
   let ultimoConsumoFormat;
   const handleChange = () => {
     dispatch(actualizar());
   };
   if (ultimoConsumo) {
-    ultimoConsumoFormat = new Date(ultimoConsumo);
+    fechaSeg = parseInt(ultimoConsumo, 10)
+    ultimoConsumoFormat = new Date(fechaSeg);
     dia = ultimoConsumoFormat.getDate();
-    mes = ultimoConsumoFormat.getMonth() ;
-    año = ultimoConsumoFormat.getFullYear();
+    mes = ultimoConsumoFormat.getMonth();
+    anio = ultimoConsumoFormat.getFullYear();
     horas = ultimoConsumoFormat.getHours();
     minutos = ultimoConsumoFormat.getMinutes();
     segundos = ultimoConsumoFormat.getSeconds();
+    nombreMes = numberToMonth(mes);
   }
 
   return (
@@ -45,9 +35,10 @@ const HomeScreen = ({ navigation }) => {
         <Text color="white">Ultimo consmo</Text>
         <Heading color="white">
           {ultimoConsumoFormat
-            ? `${dia} de ${obtenerNombreMes(mes)} del ${año}`
+            ? `${dia} de ${nombreMes} del ${anio}`
             : "Sin datos..."}
         </Heading>
+        {ultimoConsumoFormat && <Text color="white">A las {horas}:{minutos} </Text>}
       </Center>
       <Box width="100%" justifyContent="center" alignItems="center">
         <Text>Home Screen</Text>
